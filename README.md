@@ -1,0 +1,3 @@
+Designed an AI-assisted planning system that analyzes income, expenses, and risk appetite to generate personalized investment recommendations using data-driven decision logic.
+• Optimized portfolio allocation across SIPs, FDs, and insurance instruments, delivering real-time financial insights through a high-performance FastAPI backend.
+• Developed interactive dashboards using Chart.js to visualize financial health and asset distribution.
