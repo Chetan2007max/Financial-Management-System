@@ -1,0 +1,515 @@
+import React, { useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { Container, Typography, Button, Box, Paper, TextField, Grid, CircularProgress } from '@mui/material';
+import { Shield, TrendingUp, Target, DollarSign, Calendar, Activity, PieChart, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+import Chart from 'react-apexcharts';
+
+function Home() {
+  const [advisorData, setAdvisorData] = useState(null);
+  const [goalData, setGoalData] = useState(null);
+  const [advisorForm, setAdvisorForm] = useState({ income: '', expenses: '', age: '' });
+  const [goalForm, setGoalForm] = useState({ goal_amount: '', months: '', income: '', expenses: '', age: '' });
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  const resultsRef = useRef(null);
+
+  const handleAdvisorSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/recommend/advisor', advisorForm);
+      setAdvisorData(response.data.recommendation);
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoalSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/recommend/goal', goalForm);
+      setGoalData(response.data.recommendation);
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error) {
+      alert('Error: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const heroRef = useRef(null);
+  const advisorRef = useRef(null);
+  const goalRef = useRef(null);
+
+  const isHeroInView = useInView(heroRef, { once: true });
+  const isAdvisorInView = useInView(advisorRef, { once: true });
+  const isGoalInView = useInView(goalRef, { once: true });
+
+  return (
+    <Box sx={{ backgroundColor: '#0F172A', minHeight: '100vh' }}>
+      {/* Hero Section */}
+      <Box
+        ref={heroRef}
+        sx={{
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isHeroInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 1 }}
+        >
+          <Typography variant="h1" sx={{ fontSize: '4rem', fontWeight: 300, color: '#FFFFFF', textAlign: 'center', mb: 4 }}>
+            AI Financial Advisor
+          </Typography>
+          <Typography variant="h5" sx={{ color: '#CBD5E1', textAlign: 'center', mb: 6, maxWidth: 600 }}>
+            Unlock your financial potential with personalized AI-driven insights and goal-based strategies.
+          </Typography>
+        </motion.div>
+        <Grid container spacing={4} sx={{ maxWidth: 800 }}>
+          <Grid item xs={12} md={6}>
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <Paper
+                sx={{
+                  p: 3,
+                  backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(148, 163, 184, 0.5)',
+                  borderRadius: 2,
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Shield size={24} color="#10B981" />
+                  <Typography variant="h6" sx={{ ml: 1, color: '#10B981' }}>Risk Management</Typography>
+                </Box>
+                <Typography variant="body1" sx={{ color: '#CBD5E1' }}>
+                  All recommendations are for informational purposes only. Consult a financial advisor before making decisions.
+                </Typography>
+              </Paper>
+            </motion.div>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={isHeroInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              <Paper
+                sx={{
+                  p: 3,
+                  backgroundColor: 'rgba(15, 23, 42, 0.8)',
+                  backdropFilter: 'blur(20px)',
+                  border: '1px solid rgba(148, 163, 184, 0.5)',
+                  borderRadius: 2,
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Activity size={24} color="#6366F1" />
+                  <Typography variant="h6" sx={{ ml: 1, color: '#6366F1' }}>Reliability & Security</Typography>
+                </Box>
+                <Typography variant="body1" sx={{ color: '#CBD5E1' }}>
+                  Powered by advanced ML models with 99.9% uptime. Your data is encrypted and never shared.
+                </Typography>
+              </Paper>
+            </motion.div>
+          </Grid>
+        </Grid>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={isHeroInView ? { opacity: 1 } : {}}
+          transition={{ duration: 1, delay: 1 }}
+          sx={{ mt: 6 }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              background: 'linear-gradient(45deg, #F59E0B 30%, #6366F1 90%)',
+              color: 'white',
+              px: 6,
+              py: 2,
+              fontSize: '1.2rem',
+            }}
+            onClick={() => advisorRef.current?.scrollIntoView({ behavior: 'smooth' })}
+          >
+            Get Started
+          </Button>
+        </motion.div>
+      </Box>
+
+      {/* Advisor Feature Block */}
+      <Box
+        ref={advisorRef}
+        sx={{
+          py: 10,
+          background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+        }}
+      >
+        <Container maxWidth="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={isAdvisorInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1 }}
+          >
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '3.5rem',
+                fontWeight: 300,
+                background: 'linear-gradient(45deg, #F59E0B, #6366F1)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                textAlign: 'center',
+                mb: 4,
+              }}
+            >
+              Why Choose Our Financial Advisor?
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#CBD5E1', textAlign: 'center', mb: 6, maxWidth: 800, mx: 'auto' }}>
+              Our AI analyzes your income, expenses, and age to provide tailored investment strategies, risk profiles, and allocation plans that maximize your financial health.
+            </Typography>
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <TrendingUp size={80} color="#6366F1" />
+            </Box>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* Advisor Form */}
+      <Box sx={{ py: 10, backgroundColor: '#0F172A' }}>
+        <Container maxWidth="md">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={isAdvisorInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            <Typography variant="h3" sx={{ color: '#FFFFFF', textAlign: 'center', mb: 4 }}>
+              Tell Us About Yourself
+            </Typography>
+            <form onSubmit={handleAdvisorSubmit}>
+              <Grid container spacing={4}>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Monthly Income"
+                    type="number"
+                    value={advisorForm.income}
+                    onChange={(e) => setAdvisorForm({ ...advisorForm, income: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Monthly Expenses"
+                    type="number"
+                    value={advisorForm.expenses}
+                    onChange={(e) => setAdvisorForm({ ...advisorForm, expenses: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Your Age"
+                    type="number"
+                    value={advisorForm.age}
+                    onChange={(e) => setAdvisorForm({ ...advisorForm, age: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loading}
+                    sx={{
+                      background: 'linear-gradient(45deg, #F59E0B 30%, #6366F1 90%)',
+                      color: 'white',
+                      px: 6,
+                      py: 2,
+                      fontSize: '1.2rem',
+                    }}
+                    endIcon={loading ? <CircularProgress size={20} /> : null}
+                  >
+                    Get My Financial Plan
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* Goal Feature Block */}
+      <Box
+        ref={goalRef}
+        sx={{
+          py: 10,
+          background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
+        }}
+      >
+        <Container maxWidth="lg">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={isGoalInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1 }}
+          >
+            <Typography
+              variant="h2"
+              sx={{
+                fontSize: '3.5rem',
+                fontWeight: 300,
+                background: 'linear-gradient(45deg, #F59E0B, #6366F1)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
+                textAlign: 'center',
+                mb: 4,
+              }}
+            >
+              Plan Your Financial Goals
+            </Typography>
+            <Typography variant="h6" sx={{ color: '#CBD5E1', textAlign: 'center', mb: 6, maxWidth: 800, mx: 'auto' }}>
+              Set ambitious goals and let our AI calculate the monthly savings, investment strategies, and timelines to achieve them.
+            </Typography>
+            <Box sx={{ textAlign: 'center', mb: 6 }}>
+              <Target size={80} color="#F59E0B" />
+            </Box>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* Goal Form */}
+      <Box sx={{ py: 10, backgroundColor: '#0F172A' }}>
+        <Container maxWidth="md">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={isGoalInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1, delay: 0.5 }}
+          >
+            <Typography variant="h3" sx={{ color: '#FFFFFF', textAlign: 'center', mb: 4 }}>
+              Define Your Goal
+            </Typography>
+            <form onSubmit={handleGoalSubmit}>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Goal Amount"
+                    type="number"
+                    value={goalForm.goal_amount}
+                    onChange={(e) => setGoalForm({ ...goalForm, goal_amount: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Time in Months"
+                    type="number"
+                    value={goalForm.months}
+                    onChange={(e) => setGoalForm({ ...goalForm, months: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Monthly Income"
+                    type="number"
+                    value={goalForm.income}
+                    onChange={(e) => setGoalForm({ ...goalForm, income: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Monthly Expenses"
+                    type="number"
+                    value={goalForm.expenses}
+                    onChange={(e) => setGoalForm({ ...goalForm, expenses: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    fullWidth
+                    label="Your Age"
+                    type="number"
+                    value={goalForm.age}
+                    onChange={(e) => setGoalForm({ ...goalForm, age: e.target.value })}
+                    sx={{
+                      '& .MuiInputBase-root': { fontSize: '1.2rem', py: 2 },
+                      '& .MuiInputLabel-root': { fontSize: '1.1rem' },
+                    }}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    disabled={loading}
+                    sx={{
+                      background: 'linear-gradient(45deg, #F59E0B 30%, #6366F1 90%)',
+                      color: 'white',
+                      px: 6,
+                      py: 2,
+                      fontSize: '1.2rem',
+                    }}
+                    endIcon={loading ? <CircularProgress size={20} /> : null}
+                  >
+                    Calculate My Plan
+                  </Button>
+                </Grid>
+              </Grid>
+            </form>
+          </motion.div>
+        </Container>
+      </Box>
+
+      {/* Results */}
+      {(advisorData || goalData) && (
+        <Box ref={resultsRef} sx={{ py: 10, backgroundColor: '#1E293B' }}>
+          <Container maxWidth="lg">
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 1 }}
+            >
+              <Typography variant="h2" sx={{ color: '#FFFFFF', textAlign: 'center', mb: 6 }}>
+                Your Financial Story
+              </Typography>
+              <Grid container spacing={4}>
+                {advisorData && Object.entries(advisorData).map(([key, value]) => (
+                  <Grid item xs={12} md={6} key={key}>
+                    <Paper sx={{ p: 3, height: 300 }}>
+                      <Typography variant="h6" sx={{ color: '#6366F1', mb: 2 }}>
+                        {key.replace(/_/g, ' ').toUpperCase()}
+                      </Typography>
+                      {key === 'health_score' && typeof value === 'number' ? (
+                        <Chart
+                          options={{
+                            chart: { type: 'radialBar' },
+                            plotOptions: {
+                              radialBar: {
+                                hollow: { size: '70%' },
+                                dataLabels: {
+                                  name: { show: false },
+                                  value: {
+                                    fontSize: '24px',
+                                    color: '#10B981',
+                                    formatter: (val) => `${val}%`
+                                  }
+                                }
+                              }
+                            },
+                            colors: ['#10B981'],
+                          }}
+                          series={[value]}
+                          type="radialBar"
+                          height={200}
+                        />
+                      ) : key.includes('allocation') && typeof value === 'object' ? (
+                        <Chart
+                          options={{
+                            chart: { type: 'donut' },
+                            labels: Object.keys(value),
+                            colors: ['#10B981', '#6366F1', '#F43F5E'],
+                          }}
+                          series={Object.values(value)}
+                          type="donut"
+                          height={200}
+                        />
+                      ) : (
+                        <Typography variant="body1" sx={{ color: '#CBD5E1' }}>
+                          {Array.isArray(value) ? value.join(', ') : typeof value === 'object' ? JSON.stringify(value, null, 2) : value}
+                        </Typography>
+                      )}
+                    </Paper>
+                  </Grid>
+                ))}
+                {goalData && Object.entries(goalData).map(([key, value]) => (
+                  <Grid item xs={12} md={6} key={key}>
+                    <Paper sx={{ p: 3, height: 300 }}>
+                      <Typography variant="h6" sx={{ color: '#F59E0B', mb: 2 }}>
+                        {key.replace(/_/g, ' ').toUpperCase()}
+                      </Typography>
+                      {key === 'monthly_investment_allocation' && typeof value === 'object' ? (
+                        <Chart
+                          options={{
+                            chart: { type: 'donut' },
+                            labels: Object.keys(value),
+                            colors: ['#10B981', '#6366F1', '#F43F5E'],
+                          }}
+                          series={Object.values(value)}
+                          type="donut"
+                          height={200}
+                        />
+                      ) : (
+                        <Typography variant="body1" sx={{ color: '#CBD5E1' }}>
+                          {Array.isArray(value) ? value.join(', ') : typeof value === 'object' ? JSON.stringify(value, null, 2) : value}
+                        </Typography>
+                      )}
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+            </motion.div>
+          </Container>
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+export default Home;

@@ -1,0 +1,71 @@
+import React from 'react';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { Home as HomeIcon, AccountBalance, Flag } from '@mui/icons-material';
+import Home from './components/Home';
+import Advisor from './components/Advisor';
+import GoalPlanner from './components/GoalPlanner';
+import Results from './components/Results';
+
+const theme = createTheme({
+    secondary: {
+      main: '#0F172A',
+    },
+    background: {
+      default: '#0F172A',
+      paper: 'rgba(15, 23, 42, 0.8)',
+    },
+    text: {
+      primary: '#FFFFFF',
+      secondary: '#CBD5E1',
+    },
+  },
+  typography: {
+    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+  },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
+const drawerWidth = 240;
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>FMS - Financial Management System</Typography>
+            <Button color="inherit" component={Link} to="/" startIcon={<HomeIcon />}>Home</Button>
+            <Button color="inherit" component={Link} to="/advisor" startIcon={<AccountBalance />}>Advisor</Button>
+            <Button color="inherit" component={Link} to="/goal" startIcon={<Flag />}>Goal Planner</Button>
+          </Toolbar>
+        </AppBar>
+
+        <Routes>
+          <Route path="/" element={<HomeIcon />} />
+          <Route path="/advisor" element={<Advisor />} />
+          <Route path="/goal" element={<GoalPlanner />} />
+          <Route path="/results" element={<Results />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
+}
+
+export default App;
